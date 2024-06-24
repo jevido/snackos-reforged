@@ -1,4 +1,6 @@
 <script>
+	import { Badge } from '$lib/components/ui/badge';
+
 	import { Button } from '$lib/components/ui/button';
 	import SnackWheel from '$lib/components/snack-wheel.svelte';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
@@ -12,7 +14,8 @@
 		snackWheels.update((wheels) => [
 			...wheels,
 			{
-				snackCategory: snackCategory
+				snackCategory: snackCategory,
+				snack: null
 			}
 		]);
 	}
@@ -21,15 +24,26 @@
 		const newSnack = event.detail;
 
 		selectedSnacks.update((snacks) => {
-			const existingSnack = snacks.find((s) => s.snack.name === newSnack.name);
-
-			if (existingSnack) {
-				existingSnack.count += 1;
-			} else {
-				snacks.push({ snack: newSnack, count: 1 });
-			}
+			snacks[index] = newSnack;
 			return snacks;
 		});
+	}
+
+	// Utility function to group snacks by name and count occurrences
+	function groupSnacks(snacksArray) {
+		const grouped = snacksArray.reduce((acc, snack) => {
+			if (snack) {
+				const existing = acc.find((item) => item.snack.url === snack.url);
+				if (existing) {
+					existing.count += 1;
+				} else {
+					acc.push({ snack, count: 1 });
+				}
+			}
+			console.debug(acc);
+			return acc;
+		}, []);
+		return grouped;
 	}
 </script>
 
@@ -48,7 +62,7 @@
 				<option value="vega">Vega</option>
 				<option value="vegan">Vegan</option>
 			</select>
-			<Button on:click={addSnackWheel} class="rounded  px-4 py-2">Add Snack Wheel</Button>
+			<Button on:click={addSnackWheel} class="rounded px-4 py-2">Add Snack Wheel</Button>
 		</div>
 
 		<!-- Horizontal Scroll Area for Snack Wheels -->
@@ -66,15 +80,17 @@
 	<aside class="flex w-1/3 flex-col p-4">
 		<h2 class="mb-4 text-lg font-semibold">Selected Snacks:</h2>
 		<ul class="list-disc space-y-2 pl-5">
-			{#each $selectedSnacks as { snack, count }}
-				{#if snack}
-					<li>
-						{count}x
-						<Button variant="ghost" href={snack.url} target="_BLANK">
-							{snack.name}
-						</Button>
-					</li>
-				{/if}
+			{#each groupSnacks($selectedSnacks) as { snack, count }}
+				<li>
+					{count}x
+
+					<Button variant="ghost" href={snack.url} target="_BLANK">
+						{snack.name}
+					</Button>
+					{#each snack.tags as tag}
+						<Badge class="text-foreground gap-x2 bg-{tag.color} hover:bg-{tag.color}">{tag.label}</Badge>
+					{/each}
+				</li>
 			{/each}
 		</ul>
 	</aside>

@@ -1,29 +1,37 @@
 <script>
+	import { createEventDispatcher } from 'svelte';
 	import { writable } from 'svelte/store';
-	import { snacks as snackos } from '$lib/snacks';
+	import { sorted as snackos } from '$lib/snacks';
+	import { Button } from '$lib/components/ui/button';
+	import { Badge } from '$lib/components/ui/badge';
 
-	let snacks = writable(snackos);
+	export let snackCategory = 'bisnacksueel';
+
+	$: snacks = snackos[snackCategory];
+
 	let selectedSnack = writable(null);
 	let spinning = writable(false);
 	let rotation = writable(0);
-	let spin = 10;
+	let totalSpin = 10;
+	const dispatch = createEventDispatcher();
 
 	const spinWheel = () => {
 		if ($spinning) return;
 
 		spinning.set(true);
 		const spinDuration = 3000; // 3 seconds spin time
-		const spinCount = (spin = spin + Math.round(Math.random() * 10)); // Spin 10 times
+		const spinCount = (totalSpin = totalSpin + Math.min(Math.round(Math.random() * 15), 6)); // Spin 10 times
 
 		let totalRotation = 360 * spinCount + Math.floor(Math.random() * 360);
 		rotation.set(totalRotation);
 
 		setTimeout(() => {
 			spinning.set(false);
-			const segmentAngle = 360 / $snacks.length;
+			const segmentAngle = 360 / snacks.length;
 			const finalRotation = totalRotation % 360;
 			const selectedIndex = Math.floor(((360 - finalRotation) % 360) / segmentAngle);
-			selectedSnack.set($snacks[selectedIndex]);
+			selectedSnack.set(snacks[selectedIndex]);
+			dispatch('selected', snacks[selectedIndex]);
 		}, spinDuration);
 	};
 
@@ -73,44 +81,52 @@
 </script>
 
 <div class="flex flex-col">
-	<div class="relative m-0 size-[300px] overflow-hidden rounded-full">
+	<div class="relative m-0 size-[400px] overflow-hidden rounded-full">
 		<svg
 			class="wheel size-full rounded-full"
 			viewBox="0 0 100 100"
 			xmlns="http://www.w3.org/2000/svg"
 			style="transform: rotate({$rotation}deg)"
 		>
-			{#each $snacks as snack, i}
+			{#each snacks as snack, i}
 				<path
-					d={getArcPath(i * (360 / $snacks.length), (i + 1) * (360 / $snacks.length))}
+					d={getArcPath(i * (360 / snacks.length), (i + 1) * (360 / snacks.length))}
 					fill={i % 2 === 0 ? '#f2f2f2' : '#e6e6e6'}
 					stroke="#ccc"
 				/>
 				<text
-					x={getTextPosition((i + 0.5) * (360 / $snacks.length)).x}
-					y={getTextPosition((i + 0.5) * (360 / $snacks.length)).y}
+					x={getTextPosition((i + 0.5) * (360 / snacks.length)).x}
+					y={getTextPosition((i + 0.5) * (360 / snacks.length)).y}
 					text-anchor="middle"
 					fill="black"
-					font-size="4px"
-					transform={`rotate(${(i + 0.5) * (360 / $snacks.length) + 90}, ${getTextPosition((i + 0.5) * (360 / $snacks.length)).x}, ${getTextPosition((i + 0.5) * (360 / $snacks.length)).y})`}
+					font-size="3px"
+					transform={`rotate(${(i + 0.5) * (360 / snacks.length) + 90}, ${getTextPosition((i + 0.5) * (360 / snacks.length)).x}, ${getTextPosition((i + 0.5) * (360 / snacks.length)).y})`}
 				>
-					{snack}
+					{snack.name}
 				</text>
 			{/each}
 		</svg>
 		<div class="marker"></div>
 	</div>
 
-	<button
-		class="flex justify-center rounded-md border-fuchsia-300 bg-fuchsia-600 p-3 text-white"
-		on:click={spinWheel}
-		disabled={$spinning}>Spin the Wheel</button
-	>
+	<select bind:value={snackCategory} class="rounded border border-gray-300 bg-white px-4 py-2">
+		<option value="bisnacksueel">Bisnacksueel</option>
+		<option value="meat">Vlees</option>
+		<option value="vega">Vega</option>
+		<option value="vegan">Vegan</option>
+	</select>
+	<Button on:click={spinWheel} disabled={$spinning}>Spin the Wheel</Button>
 
 	{#if $selectedSnack}
-		<div class="text-2xl font-bold">
-			{$selectedSnack}
-		</div>
+		<a href={$selectedSnack.url} target="_BLANK" class="text-2xl font-bold">
+			{#each $selectedSnack.tags as tag}
+				<Badge class="text-white bg-{tag.color}">{tag.label}</Badge>
+			{/each}
+
+			<span class="underline">
+				{$selectedSnack.name}
+			</span>
+		</a>
 	{/if}
 </div>
 

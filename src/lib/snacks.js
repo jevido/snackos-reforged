@@ -8,5 +8,5 @@ export const snacks = [
 	'Pretzels',
 	'Fruit Snacks',
 	'Granola Bars',
-	'Jerky'
+	'je moeder'
 ];

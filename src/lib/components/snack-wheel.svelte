@@ -111,7 +111,7 @@
 
 	<select
 		bind:value={snackCategory}
-		class="bg-muted text-muted-foreground rounded border px-4 py-2"
+		class="rounded border bg-muted px-4 py-2 text-muted-foreground"
 	>
 		<option value="bisnacksueel">Bisnacksueel</option>
 		<option value="meat">Vlees</option>

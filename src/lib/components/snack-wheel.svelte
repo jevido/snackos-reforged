@@ -109,7 +109,10 @@
 		<div class="marker"></div>
 	</div>
 
-	<select bind:value={snackCategory} class="bg-muted text-muted-foreground rounded border px-4 py-2">
+	<select
+		bind:value={snackCategory}
+		class="bg-muted text-muted-foreground rounded border px-4 py-2"
+	>
 		<option value="bisnacksueel">Bisnacksueel</option>
 		<option value="meat">Vlees</option>
 		<option value="vega">Vega</option>
@@ -118,15 +121,13 @@
 	<Button on:click={spinWheel} disabled={$spinning}>Spin the Wheel</Button>
 
 	{#if $selectedSnack}
-		<a href={$selectedSnack.url} target="_BLANK" class="text-2xl font-bold">
+		<Button href={$selectedSnack.url} target="_BLANK" class="text-2xl font-bold">
 			{#each $selectedSnack.tags as tag}
 				<Badge class="text-foreground bg-{tag.color}">{tag.label}</Badge>
 			{/each}
 
-			<span class="underline">
-				{$selectedSnack.name}
-			</span>
-		</a>
+			{$selectedSnack.name}
+		</Button>
 	{/if}
 </div>
 

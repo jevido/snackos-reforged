@@ -1,11 +1,12 @@
 import { browser } from '$app/environment';
 import { storable } from '$lib/utils';
 
-let darkMode = false;
+let darkMode = true;
 
-if (typeof window !== 'undefined') {
-	darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-}
+// if (typeof window !== 'undefined') {
+// 	darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+// }
+// Todo: make a nicer bright theme
 
 const preferences = storable('preferences', {
 	theme: darkMode ? 'dark' : 'bright'

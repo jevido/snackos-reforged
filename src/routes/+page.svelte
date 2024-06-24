@@ -59,10 +59,10 @@
 	}
 </script>
 
-<div class="flex w-full">
+<div class="mx-8 mt-8 flex max-w-full">
 	<main class="flex min-h-screen w-2/3 flex-col items-center">
 		<!-- Snack Category Selector -->
-		<div class="mb-4 mt-8 flex items-center space-x-4">
+		<div class="mb-4 flex items-center space-x-4">
 			<label for="category" class="text-lg font-semibold">Select Snack Category:</label>
 			<select
 				bind:value={snackCategory}
@@ -77,7 +77,7 @@
 		</div>
 
 		<!-- Horizontal Scroll Area for Snack Wheels -->
-		<ScrollArea orientation="horizontal" class="h-[520px] w-full bg-secondary">
+		<ScrollArea orientation="horizontal" class="h-[520px] w-full rounded-md bg-secondary">
 			<div class="flex space-x-4 px-4">
 				{#each $snackWheels as wheel, index (wheel.id)}
 					<div class="relative">
@@ -97,8 +97,9 @@
 			</div>
 		</ScrollArea>
 	</main>
-	<aside class="flex w-1/3 flex-col p-4">
-		<h2 class="mb-4 text-lg font-semibold">Selected Snacks:</h2>
+	<aside class="flex w-1/3 flex-col items-center">
+		<h2 class="mt-1.5 px-4 text-lg font-semibold">Selected Snacks:</h2>
+
 		<ul class="list-disc space-y-2 pl-5">
 			{#each groupSnacks($selectedSnacks) as { snack, count }}
 				<li>

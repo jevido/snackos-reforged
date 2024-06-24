@@ -1,6 +1,5 @@
 <script>
 	import { Badge } from '$lib/components/ui/badge';
-
 	import { Button } from '$lib/components/ui/button';
 	import SnackWheel from '$lib/components/snack-wheel.svelte';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
@@ -9,15 +8,18 @@
 	let snackCategory = 'bisnacksueel';
 	let snackWheels = writable([]);
 	let selectedSnacks = writable([]);
+	let incrementedId = 7; // why not 7
 
 	function addSnackWheel() {
 		snackWheels.update((wheels) => [
 			...wheels,
 			{
+				id: incrementedId,
 				snackCategory: snackCategory,
 				snack: null
 			}
 		]);
+		incrementedId++;
 	}
 
 	function handleSnackSelected(event, index) {
@@ -25,6 +27,17 @@
 
 		selectedSnacks.update((snacks) => {
 			snacks[index] = newSnack;
+			return snacks;
+		});
+	}
+
+	function removeSnackWheel(index) {
+		snackWheels.update((wheels) => {
+			wheels.splice(index, 1);
+			return wheels;
+		});
+		selectedSnacks.update((snacks) => {
+			snacks.splice(index, 1);
 			return snacks;
 		});
 	}
@@ -40,7 +53,6 @@
 					acc.push({ snack, count: 1 });
 				}
 			}
-			console.debug(acc);
 			return acc;
 		}, []);
 		return grouped;
@@ -53,9 +65,8 @@
 		<div class="mb-4 mt-8 flex items-center space-x-4">
 			<label for="category" class="text-lg font-semibold">Select Snack Category:</label>
 			<select
-				id="category"
 				bind:value={snackCategory}
-				class="bg-muted text-muted-foreground rounded border px-4 py-2"
+				class="rounded border bg-muted px-4 py-2 text-muted-foreground"
 			>
 				<option value="bisnacksueel">Bisnacksueel</option>
 				<option value="meat">Vlees</option>
@@ -66,13 +77,22 @@
 		</div>
 
 		<!-- Horizontal Scroll Area for Snack Wheels -->
-		<ScrollArea orientation="horizontal" class="bg-secondary h-[520px] w-full">
+		<ScrollArea orientation="horizontal" class="h-[520px] w-full bg-secondary">
 			<div class="flex space-x-4 px-4">
-				{#each $snackWheels as wheel, index}
-					<SnackWheel
-						snackCategory={wheel.snackCategory}
-						on:selected={(event) => handleSnackSelected(event, index)}
-					/>
+				{#each $snackWheels as wheel, index (wheel.id)}
+					<div class="relative">
+						<SnackWheel
+							snackCategory={wheel.snackCategory}
+							on:selected={(event) => handleSnackSelected(event, index)}
+						/>
+						<Button
+							variant="destructive"
+							class="absolute right-2 top-2 text-white"
+							on:click={() => removeSnackWheel(index)}
+						>
+							x
+						</Button>
+					</div>
 				{/each}
 			</div>
 		</ScrollArea>
@@ -83,12 +103,13 @@
 			{#each groupSnacks($selectedSnacks) as { snack, count }}
 				<li>
 					{count}x
-
 					<Button variant="ghost" href={snack.url} target="_BLANK">
 						{snack.name}
 					</Button>
 					{#each snack.tags as tag}
-						<Badge class="text-foreground gap-x2 bg-{tag.color} hover:bg-{tag.color}">{tag.label}</Badge>
+						<Badge class="ml-2 text-foreground bg-{tag.color} hover:bg-{tag.color}"
+							>{tag.label}</Badge
+						>
 					{/each}
 				</li>
 			{/each}

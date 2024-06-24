@@ -18,8 +18,16 @@
 	}
 
 	function handleSnackSelected(event, index) {
+		const newSnack = event.detail;
+
 		selectedSnacks.update((snacks) => {
-			snacks[index] = event.detail;
+			const existingSnack = snacks.find((s) => s.snack.name === newSnack.name);
+
+			if (existingSnack) {
+				existingSnack.count += 1;
+			} else {
+				snacks.push({ snack: newSnack, count: 1 });
+			}
 			return snacks;
 		});
 	}
@@ -33,19 +41,14 @@
 			<select
 				id="category"
 				bind:value={snackCategory}
-				class="rounded border border-gray-300 bg-white px-4 py-2"
+				class="bg-muted text-muted-foreground rounded border px-4 py-2"
 			>
 				<option value="bisnacksueel">Bisnacksueel</option>
 				<option value="meat">Vlees</option>
 				<option value="vega">Vega</option>
 				<option value="vegan">Vegan</option>
 			</select>
-			<Button
-				on:click={addSnackWheel}
-				class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-			>
-				Add Snack Wheel
-			</Button>
+			<Button on:click={addSnackWheel} class="rounded  px-4 py-2">Add Snack Wheel</Button>
 		</div>
 
 		<!-- Horizontal Scroll Area for Snack Wheels -->
@@ -54,10 +57,7 @@
 				{#each $snackWheels as wheel, index}
 					<SnackWheel
 						snackCategory={wheel.snackCategory}
-						on:selected={(event) => {
-							handleSnackSelected(event, index);
-							console.debug(event, index);
-						}}
+						on:selected={(event) => handleSnackSelected(event, index)}
 					/>
 				{/each}
 			</div>
@@ -66,12 +66,13 @@
 	<aside class="flex w-1/3 flex-col p-4">
 		<h2 class="mb-4 text-lg font-semibold">Selected Snacks:</h2>
 		<ul class="list-disc space-y-2 pl-5">
-			{#each $selectedSnacks as snack}
+			{#each $selectedSnacks as { snack, count }}
 				{#if snack}
 					<li>
-						<a href={snack.url} target="_BLANK" class="text-blue-600 hover:underline">
+						{count}x
+						<Button variant="ghost" href={snack.url} target="_BLANK">
 							{snack.name}
-						</a>
+						</Button>
 					</li>
 				{/if}
 			{/each}

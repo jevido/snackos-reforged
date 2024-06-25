@@ -42,12 +42,12 @@
 
 	function removeSnackWheel(index) {
 		snackWheels.update((wheels) => {
-			wheels.splice(index, 1);
-			return wheels;
+			const updatedWheels = wheels.filter((_, i) => i !== index);
+			return updatedWheels;
 		});
 		selectedSnacks.update((snacks) => {
-			snacks.splice(index, 1);
-			return snacks;
+			const updatedSnacks = snacks.filter((_, i) => i !== index);
+			return updatedSnacks;
 		});
 	}
 
@@ -61,9 +61,14 @@
 	}
 
 	function spinAllWheels() {
-		for (let wheel of $snackWheels) {
-			wheel.element.spinWheel();
-		}
+		snackWheels.update((wheels) => {
+			wheels.forEach((wheel) => {
+				if (wheel.element) {
+					wheel.element.spinWheel();
+				}
+			});
+			return wheels;
+		});
 	}
 
 	// Utility function to group snacks by name and count occurrences

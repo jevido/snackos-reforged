@@ -2,13 +2,13 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import SnackWheel from '$lib/components/snack-wheel.svelte';
-	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
 	import { writable } from 'svelte/store';
 
 	let snackCategory = 'bisnacksueel';
 	let snackWheels = writable([]);
 	let selectedSnacks = writable([]);
-	let incrementedId = 7; // cause why not
+	let incrementedId = 7; // unique ID for each wheel
+	let spinAll = writable(false); // Store to manage spinning all wheels
 
 	let snackCounts = {
 		bisnacksueel: 1,
@@ -22,6 +22,7 @@
 			...wheels,
 			{
 				id: incrementedId,
+				element: null,
 				snackCategory: category,
 				snack: null
 			}
@@ -58,6 +59,12 @@
 		});
 	}
 
+	function spinAllWheels() {
+		for (let wheel of $snackWheels) {
+			wheel.element.spinWheel();
+		}
+	}
+
 	// Utility function to group snacks by name and count occurrences
 	function groupSnacks(snacksArray) {
 		const grouped = snacksArray.reduce((acc, snack) => {
@@ -77,7 +84,7 @@
 
 <div class="flex w-full">
 	<main class="flex min-h-screen w-2/3 flex-col items-center space-y-4">
-		<!-- Snack Category Selector -->
+		<!-- Snack Selector -->
 		<form
 			on:submit|preventDefault={generateSnacks}
 			class="mb-4 mt-8 flex flex-col items-center space-y-4"
@@ -101,6 +108,7 @@
 				<Button type="submit" class=" rounded px-4 py-2">Maak voorstel</Button>
 				<Button on:click={() => addSnackWheel('bisnacksueel')} class="rounded px-4 py-2">+ 1</Button
 				>
+				<Button on:click={spinAllWheels} class="rounded px-4 py-2">Spin All</Button>
 			</div>
 		</form>
 
@@ -110,6 +118,7 @@
 				<div class="relative">
 					<SnackWheel
 						snackCategory={wheel.snackCategory}
+						bind:this={wheel.element}
 						on:selected={(event) => handleSnackSelected(event, index)}
 					/>
 					<Button
@@ -123,7 +132,7 @@
 		</div>
 	</main>
 	<aside class="flex w-1/3 flex-col rounded bg-gray-800 p-4 text-white">
-		<h2 class="mb-4 text-lg font-semibold">Selected Snacks:</h2>
+		<h2 class="mb-4 text-lg font-semibold">Boodschappenlijstke:</h2>
 		<ul class="list-disc space-y-2 pl-5">
 			{#each groupSnacks($selectedSnacks) as { snack, count }}
 				<li>

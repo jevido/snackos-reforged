@@ -13,7 +13,7 @@
 
 <button
 	on:click={swapTheme}
-	class="absolute right-4 top-4 rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:border-gray-700 dark:text-gray-200"
+	class="absolute bottom-4 left-4 rounded-lg border border-border text-foreground"
 >
 	<svg
 		data-v-88732935=""

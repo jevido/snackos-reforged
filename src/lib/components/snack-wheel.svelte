@@ -15,7 +15,7 @@
 	let totalSpin = 10;
 	const dispatch = createEventDispatcher();
 
-	const spinWheel = () => {
+	export const spinWheel = () => {
 		if ($spinning) return;
 
 		spinning.set(true);

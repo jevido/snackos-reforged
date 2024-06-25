@@ -111,7 +111,7 @@
 				{/each}
 			</div>
 			<div class="flex flex-wrap justify-center gap-4">
-				<Button type="submit" class=" rounded px-4 py-2">Maak voorstel</Button>
+				<Button type="submit" class="rounded px-4 py-2">Maak voorstel</Button>
 				<Button on:click={() => addSnackWheel('bisnacksueel')} class="rounded px-4 py-2">+ 1</Button
 				>
 				<Button on:click={spinAllWheels} class="rounded px-4 py-2">Spin All</Button>
@@ -120,7 +120,7 @@
 
 		<!-- Scroll Area for Snack Wheels -->
 		<ScrollArea>
-			<div class="grid w-full grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
+			<div class="grid w-full grid-cols-1 gap-4 p-4 lg:grid-cols-2 2xl:grid-cols-3">
 				{#each $snackWheels as wheel, index (wheel.id)}
 					<div class="relative">
 						<SnackWheel
@@ -166,30 +166,3 @@
 <svelte:head>
 	<title>Snacko's</title>
 </svelte:head>
-
-<style>
-	@media (max-width: 768px) {
-		.flex-col {
-			flex-direction: column;
-		}
-		.space-y-4 {
-			--tw-space-y-reverse: 0;
-			margin-top: 1rem;
-		}
-		.grid-cols-1 {
-			grid-template-columns: 1fr;
-		}
-		.md\:h-screen {
-			height: auto;
-		}
-		.md\:w-2\/3 {
-			width: 100%;
-		}
-		.md\:w-1\/3 {
-			width: 100%;
-		}
-		.md\:mt-0 {
-			margin-top: 1rem;
-		}
-	}
-</style>

@@ -114,7 +114,7 @@
 		</form>
 
 		<!-- Scroll Area for Snack Wheels -->
-		<ScrollArea class="">
+		<ScrollArea>
 			<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
 				{#each $snackWheels as wheel, index (wheel.id)}
 					<div class="relative">
@@ -134,13 +134,13 @@
 			</div>
 		</ScrollArea>
 	</main>
-	<aside class="flex w-1/3 flex-col rounded bg-gray-800 p-4 text-white">
+	<aside class="flex w-1/3 flex-col rounded bg-secondary p-4 text-secondary-foreground">
 		<h2 class="mb-4 text-lg font-semibold">Boodschappenlijstje:</h2>
 		<ul class="list-disc space-y-2 pl-5">
 			{#each groupSnacks($selectedSnacks) as { snack, count }}
 				<li>
 					{count}x
-					<Button variant="ghost" href={snack.url} target="_BLANK" class="text-white">
+					<Button variant="ghost" href={snack.url} target="_BLANK">
 						{snack.name}
 					</Button>
 					{#each snack.tags as tag}

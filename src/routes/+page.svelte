@@ -8,14 +8,21 @@
 	let snackCategory = 'bisnacksueel';
 	let snackWheels = writable([]);
 	let selectedSnacks = writable([]);
-	let incrementedId = 7; // why not 7
+	let incrementedId = 7; // cause why not
 
-	function addSnackWheel() {
+	let snackCounts = {
+		bisnacksueel: 1,
+		meat: 0,
+		vega: 0,
+		vegan: 0
+	};
+
+	function addSnackWheel(category) {
 		snackWheels.update((wheels) => [
 			...wheels,
 			{
 				id: incrementedId,
-				snackCategory: snackCategory,
+				snackCategory: category,
 				snack: null
 			}
 		]);
@@ -42,6 +49,15 @@
 		});
 	}
 
+	function generateSnacks() {
+		snackWheels.set([]);
+		Object.keys(snackCounts).forEach((category) => {
+			for (let i = 0; i < snackCounts[category]; i++) {
+				addSnackWheel(category);
+			}
+		});
+	}
+
 	// Utility function to group snacks by name and count occurrences
 	function groupSnacks(snacksArray) {
 		const grouped = snacksArray.reduce((acc, snack) => {
@@ -59,56 +75,64 @@
 	}
 </script>
 
-<div class="mx-8 mt-8 flex max-w-full">
-	<main class="flex min-h-screen w-2/3 flex-col items-center">
+<div class="flex w-full">
+	<main class="flex min-h-screen w-2/3 flex-col items-center space-y-4">
 		<!-- Snack Category Selector -->
-		<div class="mb-4 flex items-center space-x-4">
-			<label for="category" class="text-lg font-semibold">Select Snack Category:</label>
-			<select
-				bind:value={snackCategory}
-				class="rounded border bg-muted px-4 py-2 text-muted-foreground"
-			>
-				<option value="bisnacksueel">Bisnacksueel</option>
-				<option value="meat">Vlees</option>
-				<option value="vega">Vega</option>
-				<option value="vegan">Vegan</option>
-			</select>
-			<Button on:click={addSnackWheel} class="rounded px-4 py-2">Add Snack Wheel</Button>
-		</div>
-
-		<!-- Horizontal Scroll Area for Snack Wheels -->
-		<ScrollArea orientation="horizontal" class="h-[520px] w-full rounded-md bg-secondary">
-			<div class="flex space-x-4 px-4">
-				{#each $snackWheels as wheel, index (wheel.id)}
-					<div class="relative">
-						<SnackWheel
-							snackCategory={wheel.snackCategory}
-							on:selected={(event) => handleSnackSelected(event, index)}
+		<form
+			on:submit|preventDefault={generateSnacks}
+			class="mb-4 mt-8 flex flex-col items-center space-y-4"
+		>
+			<h1 class="text-2xl font-semibold">Hoeveel mensen eten er?</h1>
+			<div class="flex space-x-4">
+				{#each Object.keys(snackCounts) as category, index}
+					<div class="flex flex-col items-center space-y-2">
+						<label for="category-{index}" class="text-lg font-semibold">{category}</label>
+						<input
+							id="category-{index}"
+							type="number"
+							min="0"
+							bind:value={snackCounts[category]}
+							class="rounded border bg-muted px-2 py-1 text-muted-foreground"
 						/>
-						<Button
-							variant="destructive"
-							class="absolute right-2 top-2 text-white"
-							on:click={() => removeSnackWheel(index)}
-						>
-							x
-						</Button>
 					</div>
 				{/each}
 			</div>
-		</ScrollArea>
-	</main>
-	<aside class="flex w-1/3 flex-col items-center">
-		<h2 class="mt-1.5 px-4 text-lg font-semibold">Selected Snacks:</h2>
+			<div class="flex gap-4">
+				<Button type="submit" class=" rounded px-4 py-2">Maak voorstel</Button>
+				<Button on:click={() => addSnackWheel('bisnacksueel')} class="rounded px-4 py-2">+ 1</Button
+				>
+			</div>
+		</form>
 
+		<!-- Horizontal Scroll Area for Snack Wheels -->
+		<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+			{#each $snackWheels as wheel, index (wheel.id)}
+				<div class="relative">
+					<SnackWheel
+						snackCategory={wheel.snackCategory}
+						on:selected={(event) => handleSnackSelected(event, index)}
+					/>
+					<Button
+						class="absolute right-2 top-2 bg-red-600"
+						on:click={() => removeSnackWheel(index)}
+					>
+						X
+					</Button>
+				</div>
+			{/each}
+		</div>
+	</main>
+	<aside class="flex w-1/3 flex-col rounded bg-gray-800 p-4 text-white">
+		<h2 class="mb-4 text-lg font-semibold">Selected Snacks:</h2>
 		<ul class="list-disc space-y-2 pl-5">
 			{#each groupSnacks($selectedSnacks) as { snack, count }}
 				<li>
 					{count}x
-					<Button variant="ghost" href={snack.url} target="_BLANK">
+					<Button variant="ghost" href={snack.url} target="_BLANK" class="text-white">
 						{snack.name}
 					</Button>
 					{#each snack.tags as tag}
-						<Badge class="ml-2 text-foreground bg-{tag.color} hover:bg-{tag.color}"
+						<Badge class="gap-x2 ml-2 text-foreground bg-{tag.color} hover:bg-{tag.color}"
 							>{tag.label}</Badge
 						>
 					{/each}

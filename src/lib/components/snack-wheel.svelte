@@ -120,14 +120,9 @@
 	</select>
 	<Button on:click={spinWheel} disabled={$spinning}>Spin the Wheel</Button>
 
-	<div class="h-12">
+	<div class="h-12 text-center text-2xl font-bold">
 		{#if $selectedSnack}
-			{#each $selectedSnack.tags as tag}
-				<Badge class="text-foreground bg-{tag.color}">{tag.label}</Badge>
-			{/each}
-			<Button variant="link" href={$selectedSnack.url} target="_BLANK" class="text-2xl font-bold">
-				{$selectedSnack.name}
-			</Button>
+			{$selectedSnack.name}
 		{/if}
 	</div>
 </div>

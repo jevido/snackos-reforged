@@ -1,4 +1,5 @@
 <script>
+	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import SnackWheel from '$lib/components/snack-wheel.svelte';
@@ -11,7 +12,7 @@
 	let spinAll = writable(false); // Store to manage spinning all wheels
 
 	let snackCounts = {
-		bisnacksueel: 1,
+		bisnacksueel: 13,
 		meat: 0,
 		vega: 0,
 		vegan: 0
@@ -83,11 +84,11 @@
 </script>
 
 <div class="flex w-full">
-	<main class="flex min-h-screen w-2/3 flex-col items-center space-y-4">
+	<main class="flex h-screen w-2/3 flex-col items-center space-y-4">
 		<!-- Snack Selector -->
 		<form
 			on:submit|preventDefault={generateSnacks}
-			class="mb-4 mt-8 flex flex-col items-center space-y-4"
+			class="mt-8 flex flex-col items-center space-y-4"
 		>
 			<h1 class="text-2xl font-semibold">Hoeveel mensen eten er?</h1>
 			<div class="flex space-x-4">
@@ -112,24 +113,26 @@
 			</div>
 		</form>
 
-		<!-- Horizontal Scroll Area for Snack Wheels -->
-		<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-			{#each $snackWheels as wheel, index (wheel.id)}
-				<div class="relative">
-					<SnackWheel
-						snackCategory={wheel.snackCategory}
-						bind:this={wheel.element}
-						on:selected={(event) => handleSnackSelected(event, index)}
-					/>
-					<Button
-						class="absolute right-2 top-2 bg-red-600"
-						on:click={() => removeSnackWheel(index)}
-					>
-						X
-					</Button>
-				</div>
-			{/each}
-		</div>
+		<!-- Scroll Area for Snack Wheels -->
+		<ScrollArea class="">
+			<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+				{#each $snackWheels as wheel, index (wheel.id)}
+					<div class="relative">
+						<SnackWheel
+							snackCategory={wheel.snackCategory}
+							bind:this={wheel.element}
+							on:selected={(event) => handleSnackSelected(event, index)}
+						/>
+						<Button
+							class="absolute right-2 top-2 bg-red-600"
+							on:click={() => removeSnackWheel(index)}
+						>
+							X
+						</Button>
+					</div>
+				{/each}
+			</div>
+		</ScrollArea>
 	</main>
 	<aside class="flex w-1/3 flex-col rounded bg-gray-800 p-4 text-white">
 		<h2 class="mb-4 text-lg font-semibold">Boodschappenlijstke:</h2>

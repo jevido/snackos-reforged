@@ -88,15 +88,15 @@
 	}
 </script>
 
-<div class="flex w-full">
-	<main class="flex h-screen w-2/3 flex-col items-center space-y-4">
+<div class="flex w-full flex-col md:flex-row">
+	<main class="flex h-auto w-full flex-col items-center space-y-4 p-4 md:h-screen md:w-2/3 md:p-0">
 		<!-- Snack Selector -->
 		<form
 			on:submit|preventDefault={generateSnacks}
 			class="mt-8 flex flex-col items-center space-y-4"
 		>
-			<h1 class="text-2xl font-semibold">Hoeveel mensen eten er?</h1>
-			<div class="flex space-x-4">
+			<h1 class="text-center text-xl font-semibold md:text-2xl">Hoeveel mensen eten er?</h1>
+			<div class="flex flex-wrap justify-center space-x-4">
 				{#each Object.keys(snackCounts) as category, index}
 					<div class="flex flex-col items-center space-y-2">
 						<label for="category-{index}" class="text-lg font-semibold">{category}</label>
@@ -110,7 +110,7 @@
 					</div>
 				{/each}
 			</div>
-			<div class="flex gap-4">
+			<div class="flex flex-wrap justify-center gap-4">
 				<Button type="submit" class=" rounded px-4 py-2">Maak voorstel</Button>
 				<Button on:click={() => addSnackWheel('bisnacksueel')} class="rounded px-4 py-2">+ 1</Button
 				>
@@ -120,7 +120,7 @@
 
 		<!-- Scroll Area for Snack Wheels -->
 		<ScrollArea>
-			<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+			<div class="grid w-full grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
 				{#each $snackWheels as wheel, index (wheel.id)}
 					<div class="relative">
 						<SnackWheel
@@ -139,22 +139,26 @@
 			</div>
 		</ScrollArea>
 	</main>
-	<aside class="flex w-1/3 flex-col rounded bg-secondary p-4 text-secondary-foreground">
+	<aside class="flex flex-col rounded bg-secondary p-4 text-secondary-foreground md:w-1/3">
 		<h2 class="mb-4 text-lg font-semibold">Boodschappenlijstje:</h2>
 		<ul class="list-disc space-y-2 pl-5">
-			{#each groupSnacks($selectedSnacks) as { snack, count }}
-				<li>
-					{count}x
-					<Button variant="ghost" href={snack.url} target="_BLANK">
-						{snack.name}
-					</Button>
-					{#each snack.tags as tag}
-						<Badge class="gap-x2 ml-2 text-foreground bg-{tag.color} hover:bg-{tag.color}"
-							>{tag.label}</Badge
-						>
-					{/each}
-				</li>
-			{/each}
+			{#if $selectedSnacks.length > 0}
+				{#each groupSnacks($selectedSnacks) as { snack, count }}
+					<li>
+						{count}x
+						<Button variant="ghost" href={snack.url} target="_BLANK">
+							{snack.name}
+						</Button>
+						{#each snack.tags as tag}
+							<Badge class="gap-x2 ml-2 text-foreground bg-{tag.color} hover:bg-{tag.color}"
+								>{tag.label}</Badge
+							>
+						{/each}
+					</li>
+				{/each}
+			{:else}
+				<li class="list-none">Je mag eerst aan het rad draaien</li>
+			{/if}
 		</ul>
 	</aside>
 </div>
@@ -162,3 +166,30 @@
 <svelte:head>
 	<title>Snacko's</title>
 </svelte:head>
+
+<style>
+	@media (max-width: 768px) {
+		.flex-col {
+			flex-direction: column;
+		}
+		.space-y-4 {
+			--tw-space-y-reverse: 0;
+			margin-top: 1rem;
+		}
+		.grid-cols-1 {
+			grid-template-columns: 1fr;
+		}
+		.md\:h-screen {
+			height: auto;
+		}
+		.md\:w-2\/3 {
+			width: 100%;
+		}
+		.md\:w-1\/3 {
+			width: 100%;
+		}
+		.md\:mt-0 {
+			margin-top: 1rem;
+		}
+	}
+</style>
